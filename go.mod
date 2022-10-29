@@ -15,6 +15,7 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/gofiber/fiber/v2 v2.39.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -30,5 +31,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/sys v0.0.0-20220825204002-c680a09ffe64 // indirect
+	gorm.io/gorm v1.24.0 // indirect
 	mellium.im/sasl v0.3.0 // indirect
 )

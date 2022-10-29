@@ -10,7 +10,7 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
-// Ｇolang所有對外的格式都要大寫
+// 記得資料庫的欄位都要大寫
 type GolangShaneData struct {
 	// 實際在使用的資料庫
 	// bun.BaseModel `bun:"table:jpmnb_img"`
@@ -27,7 +27,6 @@ type GolangShaneData struct {
 }
 
 const (
-	// 資料庫欄位：密碼@tcp(host:port)/資料庫?charset=utf8mb4&parseTime=True&loc=Local
 	mysqlDsn = "shane:GKbCoMubLMQ6o@tcp(sgpdb.itlab.tw:8889)/shane?charset=utf8mb4&parseTime=True&loc=Local"
 )
 
@@ -36,7 +35,6 @@ var (
 )
 
 // 連線進資料庫mysqlDb
-// init 開頭的話就會自動執行
 func init() {
 	sqldb, err := sql.Open("mysql", mysqlDsn)
 	if err != nil {
@@ -76,7 +74,7 @@ func putMysqlData() (GolangShaneData, error) {
 
 // 更新資料近mysql裡面
 /*values := db.NewValues(&[]*Book{book1, book2})*/
-func updateMysqlData(books []GolangShaneData) ([]GolangShaneData, error) {
+func updateMysqlData(books []*GolangShaneData) ([]*GolangShaneData, error) {
 	ctx := context.Background()
 
 	for i := 0; i < len(books); i++ {
@@ -96,7 +94,7 @@ func main() {
 	book1 := GolangShaneData{Id: 1, Description: putString[0]}
 	book2 := GolangShaneData{Id: 2, Description: putString[1]}
 	book3 := GolangShaneData{Id: 2, Description: putString[2]}
-	books := []GolangShaneData{book1, book2, book3}
+	books := []*GolangShaneData{&book1, &book2, &book3}
 	_, err := updateMysqlData(books)
 	if err != nil {
 		panic(err)
