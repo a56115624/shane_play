@@ -10,6 +10,8 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
+/*這個code只能更改資料庫的值跟索引,無法開啟api*/
+
 // 記得資料庫的欄位都要大寫
 type GolangShaneData struct {
 	// 實際在使用的資料庫
@@ -90,10 +92,10 @@ func updateMysqlData(books []*GolangShaneData) ([]*GolangShaneData, error) {
 // 執行
 func main() {
 
-	putString := []string{"我要工作", "我要放假", "我想開會"}
+	putString := []string{"我假日還要工作", "我假日想放假放假", "我假日不想開會"}
 	book1 := GolangShaneData{Id: 1, Description: putString[0]}
 	book2 := GolangShaneData{Id: 2, Description: putString[1]}
-	book3 := GolangShaneData{Id: 2, Description: putString[2]}
+	book3 := GolangShaneData{Id: 3, Description: putString[2]}
 	books := []*GolangShaneData{&book1, &book2, &book3}
 	_, err := updateMysqlData(books)
 	if err != nil {

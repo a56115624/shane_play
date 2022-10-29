@@ -12,16 +12,16 @@ import (
 
 // 記得資料庫的欄位都要大寫
 type MemberData struct {
-	bun.BaseModel `bun:"table:cpbl_member"`
-	ID            int    `json:"id"`
-	Team_id       int    `json:"team_id"`
-	Name          string `json:"name"`
-	Ig_url        string `json:"ig_url"`
-	Status        int    `json:"status"`
+	// bun.BaseModel `bun:"table:cpbl_member"`
+	// ID            int    `json:"id"`
+	// Team_id       int    `json:"team_id"`
+	// Name          string `json:"name"`
+	// Ig_url        string `json:"ig_url"`
+	// Status        int    `json:"status"`
 
-	// bun.BaseModel `bun:"table:Golang_shane_data"`
-	// Id            int64 `bun:",pk"`
-	// Description   string
+	bun.BaseModel `bun:"table:Golang_shane_data"`
+	Id            int64 `bun:",pk"`
+	Description   string
 }
 
 func SearchFromDB() {
@@ -64,18 +64,3 @@ func serchMember(c *fiber.Ctx) error {
 
 	// return c.SendString("ok")
 }
-
-// func searchTeam(c *fiber.Ctx) error {
-// 	team_id := c.Params("team_id")
-// 	return c.SendString(team_id)
-// }
-
-// func searchName(c *fiber.Ctx) error {
-// 	Name := c.Params("Name")
-// 	return c.SendString(Name)
-// }
-
-// func searchIgUrl(c *fiber.Ctx) error {
-// 	ig_url := c.Params("ig_url")
-// 	return c.SendString(ig_url)
-// }
