@@ -31,13 +31,12 @@ func Newhandler(db *bun.DB) Handler {
 
 func (h *Handler) HandleSearchID(c *fiber.Ctx) error { // 撈取單筆資料
 
-	db := h.db
 	log.Printf("Successfully connected to database")
 
 	// team_id := c.Params("team_id")
 
 	// var member MemberData
-	member, err := getMysqlData(db)
+	member, err := getMysqlData(h.db)
 	if err != nil {
 		return c.JSON(err)
 	}
@@ -46,30 +45,38 @@ func (h *Handler) HandleSearchID(c *fiber.Ctx) error { // 撈取單筆資料
 }
 func (h *Handler) PutDataMysql(c *fiber.Ctx) error { // 插入單筆資料
 
-	db := h.db
 	log.Printf("Successfully connected to database")
-	book, err := putMysqlData(db)
+	db := h.db
+	book := new([]*MemberData)
+	err := c.BodyParser(book)
+	if err != nil {
+		return c.JSON(err)
+	}
+	err = putMysqlData(db, *book)
 	if err != nil {
 		return c.JSON(err)
 	}
 	fmt.Printf("成功插入:%+v\n", book)
 	return c.JSON(book)
+
 }
 
 func (h *Handler) UpdateMysqlData(c *fiber.Ctx) error {
 
 	log.Printf("Successfully connected to database")
-	db := h.db
-	book1 := MemberData{Id: 1, Description: "我居然寫不出來"}
-	book2 := MemberData{Id: 2, Description: "也太難搞懂了吧"}
-	book3 := MemberData{Id: 3, Description: "人生好難"}
-	books := []*MemberData{&book1, &book2, &book3}
-	book, err := updateMysqlData(db, books)
+	// var books  []*MemberData
+	books := new([]*MemberData)
+	err := c.BodyParser(books)
 	if err != nil {
 		return c.JSON(err)
 	}
-	fmt.Printf("成功插入:%+v\n", book)
-	return c.JSON(book)
+	// books := []*GolangShaneData{&book1, &book2, &book3}
+	err = updateMysqlData(h.db, *books)
+	if err != nil {
+		return c.JSON(err)
+	}
+	fmt.Printf("成功插入:%+v\n", books)
+	return c.JSON(books)
 }
 
 // 拿到mysql裡面的資料
@@ -86,20 +93,21 @@ func getMysqlData(mysqlDb *bun.DB) ([]MemberData, error) {
 }
 
 // 插入資料進mysqlDb
-func putMysqlData(mysqlDb *bun.DB) (MemberData, error) {
-	book := MemberData{Description: "我好想偷懶"}
+func putMysqlData(mysqlDb *bun.DB, books []*MemberData) error {
 	ctx := context.Background()
-	_, err := mysqlDb.NewInsert().Model(&book).Exec(ctx)
-	if err != nil {
-		panic(err)
+	for i := 0; i < len(books); i++ {
+		_, err := mysqlDb.NewInsert().Model(books[i]).Exec(ctx)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(books) // book id is scanned automatically
 	}
-	fmt.Println(book) // book id is scanned automatically
-	return book, nil
+	return nil
 }
 
 // 更新資料近mysql裡面
 /*values := db.NewValues(&[]*Book{book1, book2})*/
-func updateMysqlData(mysqlDb *bun.DB, books []*MemberData) ([]*MemberData, error) {
+func updateMysqlData(mysqlDb *bun.DB, books []*MemberData) error {
 	ctx := context.Background()
 	for i := 0; i < len(books); i++ {
 		_, err := mysqlDb.NewUpdate().Model(books[i]).WherePK().Exec(ctx)
@@ -108,5 +116,17 @@ func updateMysqlData(mysqlDb *bun.DB, books []*MemberData) ([]*MemberData, error
 		}
 	}
 
-	return books, nil
+	return nil
+}
+
+// 接收到我postman 的值
+func (h *Handler) InsertData(c *fiber.Ctx) error {
+
+	log.Printf("Successfully connected to database")
+	data := new(MemberData)
+	if err := c.BodyParser(data); err != nil {
+		return c.JSON(err)
+	}
+	fmt.Printf("成功插入:%+v\n", data)
+	return c.JSON(data)
 }

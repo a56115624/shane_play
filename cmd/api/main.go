@@ -35,10 +35,11 @@ func main() {
 		fmt.Printf("hello world")
 		return c.SendString("welcome cpbl")
 	})
+
 	// 在Golang的世界裡,要讓這個函式可以被引用,一定要用大寫
 	app.Get("/search", h.HandleSearchID)
-	app.Post("/put", h.PutDataMysql)
-	app.Post("/update", h.UpdateMysqlData)
-
+	app.Put("/put", h.PutDataMysql)
+	app.Put("/update", h.UpdateMysqlData)
+	app.Put("/insert", h.InsertData)
 	app.Listen(":3000")
 }
