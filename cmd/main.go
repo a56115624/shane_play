@@ -6,7 +6,7 @@ import (
 	"github.com/teampui/pac"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
-	"os"
+	"shane_play/cmd/api"
 )
 
 const (
@@ -15,9 +15,9 @@ const (
 
 func main() {
 	app := pac.NewApp(
-		pac.ListenPortFromEnv(":7777"),   // 如果環境變數裡沒設定的話，預設 :7777
-		pac.UseLogger(),                  // 使用請求記錄器
-		ProvideMysqlDB(os.Getenv("DSN")), // 使用 BunDB 作為資料庫層, // 使用 BunDB 作為資料庫層
+		pac.ListenPortFromEnv(":3000"), // 如果環境變數裡沒設定的話，預設 :7777
+		pac.UseLogger(),                // 使用請求記錄器
+		ProvideMysqlDB(mysqlDsn),       // 使用 BunDB 作為資料庫層, // 使用 BunDB 作為資料庫層
 		// redis.ProvideSession(redis.SessionConfig{
 		// 	ClientKeystore: "cookie:942",
 		// 	RedisURL:       os.Getenv("REDIS_DSN"),
@@ -25,8 +25,8 @@ func main() {
 		// }),
 	)
 
-	app.Add(&PostgresRepo{})
-	app.Add(&Handler{})
+	app.Add(&handler.PostgresRepo{})
+	app.Add(&handler.Handler{})
 
 	app.Start()
 }

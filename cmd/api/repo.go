@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -53,7 +53,7 @@ func (repo *PostgresRepo) putMysqlData(books []*MemberData) error {
 	for i := 0; i < len(books); i++ {
 		_, err := repo.db.NewInsert().Model(books[i]).Exec(ctx)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		fmt.Println(books) // book id is scanned automatically
 	}
@@ -67,7 +67,7 @@ func (repo *PostgresRepo) updateMysqlData(books []*MemberData) error {
 	for i := 0; i < len(books); i++ {
 		_, err := repo.db.NewUpdate().Model(books[i]).WherePK().Exec(ctx)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
 
