@@ -2,13 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"shane_play/cmd/crud"
-
-	"github.com/gofiber/fiber/v2"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/teampui/pac"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
-	"github.com/uptrace/bun/extra/bundebug"
+	"os"
 )
 
 const (
@@ -16,30 +14,32 @@ const (
 )
 
 func main() {
+	app := pac.NewApp(
+		pac.ListenPortFromEnv(":7777"),   // 如果環境變數裡沒設定的話，預設 :7777
+		pac.UseLogger(),                  // 使用請求記錄器
+		ProvideMysqlDB(os.Getenv("DSN")), // 使用 BunDB 作為資料庫層, // 使用 BunDB 作為資料庫層
+		// redis.ProvideSession(redis.SessionConfig{
+		// 	ClientKeystore: "cookie:942",
+		// 	RedisURL:       os.Getenv("REDIS_DSN"),
+		// 	Expiration:     24 * time.Hour,
+		// }),
+	)
 
-	sqldb, err := sql.Open("mysql", mysqlDsn)
-	if err != nil {
-		panic(err)
+	app.Add(&PostgresRepo{})
+	app.Add(&Handler{})
+
+	app.Start()
+}
+func ProvideMysqlDB(dsn string) pac.AppOption {
+	if dsn == "" {
+		panic("pac/bundb: cannot start, missed DSN settings")
 	}
 
-	mysqlDb := bun.NewDB(sqldb, mysqldialect.New())
-	// 下面這行是要顯示出sql的語法
-	mysqlDb.AddQueryHook(bundebug.NewQueryHook())
-
-	h := crud.Newhandler(mysqlDb) // h = {0xc0001835f0}
-
-	// SelectID(db *sql.DB, DataID int)
-	app := fiber.New()
-
-	app.Get("/", func(c *fiber.Ctx) error { //Middleware 設計用於更改請求或響應的函數稱爲中間件函數。
-		fmt.Printf("hello world")
-		return c.SendString("welcome cpbl")
-	})
-
-	// 在Golang的世界裡,要讓這個函式可以被引用,一定要用大寫
-	app.Get("/search", h.HandleSearchID)
-	app.Put("/put", h.PutDataMysql)
-	app.Put("/update", h.UpdateMysqlData)
-	app.Put("/insert", h.InsertData)
-	app.Listen(":3000")
+	return func(a *pac.App) {
+		sqldb, err := sql.Open("mysql", dsn)
+		if err != nil {
+			panic(err)
+		}
+		a.Services.Add("db", bun.NewDB(sqldb, mysqldialect.New()))
+	}
 }
