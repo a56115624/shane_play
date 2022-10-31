@@ -44,15 +44,27 @@ func (h *Handler) HandleSearchID(c *fiber.Ctx) error { // 撈取單筆資料
 	fmt.Printf("teamMember:%+v\n", member)
 	return c.JSON(member)
 }
-func (h *Handler) PutDataMysql(c *fiber.Ctx) error { // 撈取單筆資料
+func (h *Handler) PutDataMysql(c *fiber.Ctx) error { // 插入單筆資料
 
 	db := h.db
 	log.Printf("Successfully connected to database")
-
-	// team_id := c.Params("team_id")
-
-	// var member MemberData
 	book, err := putMysqlData(db)
+	if err != nil {
+		return c.JSON(err)
+	}
+	fmt.Printf("成功插入:%+v\n", book)
+	return c.JSON(book)
+}
+
+func (h *Handler) UpdateMysqlData(c *fiber.Ctx) error {
+
+	log.Printf("Successfully connected to database")
+	db := h.db
+	book1 := MemberData{Id: 1, Description: "我居然寫不出來"}
+	book2 := MemberData{Id: 2, Description: "也太難搞懂了吧"}
+	book3 := MemberData{Id: 3, Description: "人生好難"}
+	books := []*MemberData{&book1, &book2, &book3}
+	book, err := updateMysqlData(db, books)
 	if err != nil {
 		return c.JSON(err)
 	}
@@ -75,7 +87,7 @@ func getMysqlData(mysqlDb *bun.DB) ([]MemberData, error) {
 
 // 插入資料進mysqlDb
 func putMysqlData(mysqlDb *bun.DB) (MemberData, error) {
-	book := MemberData{Id: 5, Description: "我好想偷懶"}
+	book := MemberData{Description: "我好想偷懶"}
 	ctx := context.Background()
 	_, err := mysqlDb.NewInsert().Model(&book).Exec(ctx)
 	if err != nil {
@@ -83,4 +95,18 @@ func putMysqlData(mysqlDb *bun.DB) (MemberData, error) {
 	}
 	fmt.Println(book) // book id is scanned automatically
 	return book, nil
+}
+
+// 更新資料近mysql裡面
+/*values := db.NewValues(&[]*Book{book1, book2})*/
+func updateMysqlData(mysqlDb *bun.DB, books []*MemberData) ([]*MemberData, error) {
+	ctx := context.Background()
+	for i := 0; i < len(books); i++ {
+		_, err := mysqlDb.NewUpdate().Model(books[i]).WherePK().Exec(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return books, nil
 }

@@ -20,7 +20,7 @@ type MemberData struct {
 	// Status        int    `json:"status"`
 
 	bun.BaseModel `bun:"table:Golang_shane_data"`
-	Id            int64 `bun:",pk"`
+	Id            int64 `bun:",pk,autoincrement"`
 	Description   string
 }
 
