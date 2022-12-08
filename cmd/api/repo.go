@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-
 	"github.com/teampui/pac"
 	"github.com/uptrace/bun"
 )

@@ -17,7 +17,7 @@ func main() {
 	app := pac.NewApp(
 		pac.ListenPortFromEnv(":3000"), // 如果環境變數裡沒設定的話，預設 :7777
 		pac.UseLogger(),                // 使用請求記錄器
-		ProvideMysqlDB(mysqlDsn),       // 使用 BunDB 作為資料庫層, // 使用 BunDB 作為資料庫層
+		ProvideMysqlDB(mysqlDsn),       // 使用mysql作為資料庫
 		// redis.ProvideSession(redis.SessionConfig{
 		// 	ClientKeystore: "cookie:942",
 		// 	RedisURL:       os.Getenv("REDIS_DSN"),
